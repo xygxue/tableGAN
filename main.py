@@ -112,7 +112,7 @@ def main(_):
     if FLAGS.shadow_gan:
         checkpoint_folder = FLAGS.checkpoint_par_dir + '/' + FLAGS.dataset + "/" + 'atk_' + FLAGS.test_id
     else:
-        checkpoint_folder = f'{FLAGS.checkpoint_par_dir}/{FLAGS.dataset}/{FLAGS.test_id}'
+        checkpoint_folder = '{}/{}/{}'.format(FLAGS.checkpoint_par_dir, FLAGS.dataset, FLAGS.test_id)
 
     if not os.path.exists(checkpoint_folder):
         os.makedirs(checkpoint_folder)

@@ -8,6 +8,8 @@ Modified: 10/15/2018
 from __future__ import division
 
 import time
+from pathlib import Path
+
 import tensorflow as tf
 from ops import *
 from utils import *
@@ -274,7 +276,7 @@ class TableGan(object):
 
         self.saver = tf.train.Saver()
 
-    def train(self, config, experiment):
+    def train(self, config):
         print("Start Training...\n")
 
         d_optim = tf.train.AdamOptimizer(config.learning_rate, beta1=config.beta1) \
@@ -514,10 +516,10 @@ class TableGan(object):
                     })
 
                 counter += 1
-                experiment.log_metric("d_loss", errD_fake + errD_real, step=idx)
-                experiment.log_metric("g_loss", errG, step=idx)
+                # experiment.log_metric("d_loss", errD_fake + errD_real, step=idx)
+                # experiment.log_metric("g_loss", errG, step=idx)
                 if self.y_dim:
-                    experiment.log_metric("c_loss", errC, step=idx)
+                    # experiment.log_metric("c_loss", errC, step=idx)
                     print("Dataset: [%s] -> [%s] -> Epoch: [%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f, "
                           "c_loss: %.8f" % (config.dataset, config.test_id, epoch, idx, batch_idxs,
                                             time.time() - start_time, errD_fake + errD_real, errG, errC))
@@ -810,19 +812,19 @@ class TableGan(object):
 
     def load_tabular_data(self, dataset_name, dim, classes=2, test_id='', load_fake_data=False):
 
-        # self.train_data_path = f"./data/{dataset_name}/{dataset_name}"
+
         self.train_data_path = f'data/{dataset_name}/{dataset_name}'
         self.train_label_path = f'data/{dataset_name}/{dataset_name}_labels'
 
-        if os.path.exists(self.train_data_path + ".csv"):
+        if os.path.exists(os.path.join(Path(__file__).parent, self.train_data_path + ".csv")):
 
-            X = pd.read_csv(self.train_data_path + ".csv", sep=';')
+            X = pd.read_csv(os.path.join(Path(__file__).parent, self.train_data_path + ".csv"), sep=',')
             print("Loading CSV input file : %s" % (self.train_data_path + ".csv"))
 
             self.attrib_num = X.shape[1]
 
             if self.y_dim:
-                y = np.genfromtxt(open(self.train_label_path + ".csv", 'r'), delimiter=',')
+                y = np.genfromtxt(open(os.path.join(Path(__file__).parent, self.train_label_path + ".csv"), 'r'), delimiter=',')
 
                 print("Loading CSV input file : %s" % (self.train_label_path + ".csv"))
 
